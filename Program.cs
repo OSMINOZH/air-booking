@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using NLog;
+using Hello;
 
-
-
-namespace lr6
+namespace abc
 {
     interface flight
     {
@@ -18,7 +18,7 @@ namespace lr6
         public string Email { get; set; }
         public void View()
         {
-            Console.WriteLine("Пользователь: " + Name + " " + NameSecond + " (" + Email +")");
+            Console.WriteLine("Пользователь: " + Name + " " + NameSecond + " (" + Email + ")");
         }
     }
     class AviaCompany : flight // Company
@@ -76,7 +76,7 @@ namespace lr6
     }
     class Ticket : flight // FLIGHTS
     {
-        public int IdTicket {get; set;}
+        public int IdTicket { get; set; }
         public int Price { get; set; }
         public int Sit { get; set; }
         public string User { get; set; }
@@ -91,9 +91,17 @@ namespace lr6
     }
     class Program
     {
+        private static Logger logger = LogManager.GetCurrentClassLogger();
         static void Main(string[] args)
         {
-            int kolvo_flight, i, check_found = 0, check_idFlight, mode=0, search_mode=0;
+            NLog.Common.InternalLogger.LogLevel = NLog.LogLevel.Debug;
+            NLog.Common.InternalLogger.LogToConsole = true;
+            NLog.Common.InternalLogger.LogFile = @"c:\temp\nlog-internal.txt";
+
+            var hv = new Hello();
+            hv.Massage();
+
+            int kolvo_flight, i, check_found = 0, check_idFlight, mode = 0, search_mode = 0;
             string check_name, check_nameSecond, check_startPoint, check_destinationPoint;
             Console.Write("Введите количество рейсов: ");
             kolvo_flight = Int32.Parse(Console.ReadLine());
@@ -109,27 +117,25 @@ namespace lr6
                 {
                     Console.WriteLine();
                     Console.WriteLine("ЗАПОЛНИТЕ ИНФОРМАЦИЮ О РЕЙСЕ:");
+                    logger.Info("test test test.");
                     // INITIALIZATION
                     user[i] = new User();
                     flights[i] = new Flights();
                     aviacompany[i] = new AviaCompany();
                     startpoint[i] = new StartPoint();
                     destinationpoint[i] = new DestinationPoint();
-                    //// USER
-                    //Console.Write("Имя пользователя: ");
-                    //user[i].Name = Console.ReadLine();
-                    //Console.Write("Фамилия пользователя: ");
-                    //user[i].NameSecond = Console.ReadLine();
-                    //Console.Write("Email пользователя: ");
-                    //user[i].Email = Console.ReadLine();
+                    ticket[i] = new Ticket();
                     // Flights
                     Console.Write("Номер рейса: ");
                     flights[i].IdFlight = Int32.Parse(Console.ReadLine()); //Int32.Parse(Console.ReadLine());
                     Console.Write("Тип самолёта: ");
                     flights[i].TypeAircraft = Console.ReadLine();
                     Console.WriteLine("Время вылета: [01/01/2001 01:01]");  // Время поменять в классе тип // Сделать метод определения числа
+                    logger.Trace("logger.Trace");
+                    logger.Debug("logger.Debug");
                     flights[i].TimeStart = DateTime.ParseExact(Console.ReadLine(), "dd/MM/yyyy HH:mm", null);
                     Console.WriteLine("Время прилёта: [01/01/2001 01:01]"); // Время поменять в классе тип
+                    logger.Info("test test test.");
                     flights[i].TimeDestination = DateTime.ParseExact(Console.ReadLine(), "dd/MM/yyyy HH:mm", null);
                     Console.Write("Стоимость билета: ");
                     flights[i].Price = Int32.Parse(Console.ReadLine()); //Int32.Parse(Console.ReadLine());
@@ -151,10 +157,19 @@ namespace lr6
                     Console.Write("Код Аэропорта прилёта: ");
                     destinationpoint[i].CodeAirport = Console.ReadLine();
                     Console.WriteLine();
+                    logger.Warn("logger.Warn");
+                    logger.Error("logger.Error");
+                    logger.Fatal("logger.Fatal");
+
                 }
                 catch (Exception ex)
                 {
                     Console.WriteLine("ex: " + ex);
+                    logger.Info("logger.Info");
+                    logger.Warn("logger.Warn");
+                    logger.Error("logger.Error");
+                    logger.Fatal("logger.Fatal");
+
                 }
             }
             Console.WriteLine("--------------------------------------");
@@ -178,18 +193,30 @@ namespace lr6
                 }
                 Console.WriteLine();
                 Console.WriteLine($"Выберите режим: \n [1] ПОИСК РЕЙСОВ [2] ПОКУПКА БИЛЕТОВ [3] ДОБАВЛЕНИЕ РЕЙСОВ\n");
+                logger.Info("logger.Info");
+                logger.Warn("logger.Warn");
+                logger.Error("logger.Error");
+                logger.Fatal("logger.Fatal");
                 Console.Write("Режим: ");
                 mode = Int32.Parse(Console.ReadLine());
                 if (mode <= 0 || mode > 3) { }
                 else if (mode == 1)
                 {
                     Console.WriteLine($"Выберите режим поиска: \n [1] ПОИСК ПО ПУНКТУ ОТПРАВЛЕНИЯ И НАЗНАЧЕНИЯ [2] ПОИСК ПО НОМЕРУ РЕЙСА \n [0] ВЕРНУТЬСЯ НАЗАД");
+                    logger.Info("logger.Info");
+                    logger.Warn("logger.Warn");
+                    logger.Error("logger.Error");
+                    logger.Fatal("logger.Fatal");
                     Console.Write("Режим поиска: ");
                     search_mode = Int32.Parse(Console.ReadLine());
                     switch (search_mode)
                     {
                         case 0:
                             Console.WriteLine("Выберите режим поиска!");
+                            logger.Info("logger.Info");
+                            logger.Warn("logger.Warn");
+                            logger.Error("logger.Error");
+                            logger.Fatal("logger.Fatal");
                             break;
                         case 1:
                             Console.Write("Введите пункт вылета: ");
@@ -204,6 +231,7 @@ namespace lr6
                                     check_found = 1;
                                     Console.WriteLine();
                                     Console.WriteLine("НАЙДЕНЫЕ РЕЙСЫ: ");
+                                    logger.Info("test test test.");
                                     startpoint[i].View();
                                     destinationpoint[i].View();
                                     flights[i].View(); check_found = 1;
@@ -212,6 +240,7 @@ namespace lr6
                             if (check_found == 0)
                             {
                                 Console.WriteLine("НЕ НАЙДЕНЫ ПУНКТЫ ВЫЛЕТА/ПРИЛЁТА  " + check_startPoint + " " + check_destinationPoint);
+                                logger.Info("test test test.");
                             }
                             break;
                         case 2:
@@ -224,6 +253,7 @@ namespace lr6
                                     check_found = 1;
                                     Console.WriteLine();
                                     Console.WriteLine("НАЙДЕНЫЕ РЕЙСЫ: ");
+                                    logger.Info("test test test.");
                                     flights[i].View(); check_found = 1;
                                 }
                             }
@@ -240,11 +270,12 @@ namespace lr6
                     check_idFlight = Int32.Parse(Console.ReadLine());
                     for (i = 0; i < kolvo_flight; i++)
                     {
-                        if ((check_idFlight == flights[i].IdFlight) && (flights[i].SitsEmpty!= 0) && (flights[i].Status == "Ожидание"))
+                        if ((check_idFlight == flights[i].IdFlight) && (flights[i].SitsEmpty != 0) && (flights[i].Status == "Ожидание"))
                         {
                             check_found = 1;
                             Console.WriteLine();
                             Console.WriteLine("НАЙДЕНЫЕ РЕЙСЫ: ");
+                            logger.Info("test test test.");
                             flights[i].View(); check_found = 1;
                             Console.WriteLine("Хотите купить билет? Y/N");
                             string to_buy = Console.ReadLine(); // STRING
@@ -258,25 +289,28 @@ namespace lr6
                                 Console.Write("Email пользователя: ");
                                 user[i].Email = Console.ReadLine();
                                 // TICKET
+                                int empty_sits_temp = flights[i].SitsEmpty;
                                 string temp = $"{flights[i].IdFlight}{flights[i].SitsEmpty}{flights[i].Price}{flights[i].IdFlight}"; // IDFLIGHT + SIT + PRICE + IDFLIGHT
-                                ticket[i].Sit = flights[i].SitsEmpty;
+                                ticket[i].Sit = empty_sits_temp;
                                 ticket[i].Price = flights[i].Price;
-                                flights[i].SitsEmpty= flights[i].SitsEmpty - 1; // MINUS SIT
+                                flights[i].SitsEmpty = empty_sits_temp - 1; // MINUS SIT
                                 ticket[i].IdTicket = Convert.ToInt32(temp);
                                 ticket[i].User = $"{user[i].Name}_{user[i].NameSecond}_{user[i].Email}";
+                                Console.WriteLine("\n \n \n Поздравляем с приобретением билета! \n \n ВАШ БИЛЕТ:");
+                                ticket[i].View();
                             }
-                            else break;
                         }
                         else
                         {
                             Console.WriteLine("Рейс недоступен или отсутствует");
+                            logger.Info("test test test.");
                         }
                     }
                     if (check_found == 0)
                     {
                         Console.WriteLine("НЕ НАЙДЕНЫ РЕЙСЫ  " + check_idFlight);
+                        logger.Info("test test test.");
                     }
-                    break;
                 }
                 else if (mode == 3) // ADD NEW FLIGHTS
                 {
@@ -288,6 +322,10 @@ namespace lr6
                         {
                             Console.WriteLine();
                             Console.WriteLine("ЗАПОЛНИТЕ ИНФОРМАЦИЮ О РЕЙСЕ:");
+                            logger.Info("test test test.");
+                            logger.Fatal("This is a fatal message");
+                            logger.Trace("logger.Trace");
+                            logger.Debug("logger.Debug");
                             // INITIALIZATION
                             user[i] = new User();
                             flights[i] = new Flights();
@@ -296,12 +334,6 @@ namespace lr6
                             destinationpoint[i] = new DestinationPoint();
                             ticket[i] = new Ticket();
                             // USER
-                            //Console.Write("Имя пользователя: ");
-                            //user[i].Name = Console.ReadLine();
-                            //Console.Write("Фамилия пользователя: ");
-                            //user[i].NameSecond = Console.ReadLine();
-                            //Console.Write("Email пользователя: ");
-                            //user[i].Email = Console.ReadLine();
                             // Flights
                             Console.Write("Номер рейса: ");
                             flights[i].IdFlight = Int32.Parse(Console.ReadLine()); //Int32.Parse(Console.ReadLine());
@@ -335,12 +367,15 @@ namespace lr6
                         catch (Exception ex)
                         {
                             Console.WriteLine("ex: " + ex);
+                            logger.Info("test test test.");  
                         }
                     }
                 }
                 Console.WriteLine("ЧТОБЫ ВЫЙТИ НАЖМИТЕ КНОПКУ 'ESC' || ЧТОБЫ ОСТАТЬСЯ НАЖМИТЕ ЛЮБУЮ ДРУГУЮ КНОПКУ");
+                logger.Info("test test test.");
                 esc = Console.ReadKey();
             } while (esc.Key != ConsoleKey.Escape);
+            LogManager.Shutdown();
         }
     }
 }
